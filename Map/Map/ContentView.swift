@@ -17,7 +17,7 @@ struct ContentView: View {
         Map(coordinateRegion: $viewModel.region, showsUserLocation: true)
             .ignoresSafeArea()
             .onAppear{
-                viewModel.checkIfLoactionServicesIsEnabled()
+                viewModel.checkIfLocationServicesIsEnabled()
             }
     }
 }
@@ -31,7 +31,7 @@ CLLocationManagerDelegate {
                                               span: MKCoordinateSpan (latitudeDelta: 1,
                                                                       longitudeDelta: 1))
     
-    func checkIfLoactionServicesIsEnabled() {
+    func checkIfLocationServicesIsEnabled() {
         if CLLocationManager.locationServicesEnabled() {
             locationManager = CLLocationManager()
             locationManager!.delegate = self
@@ -43,7 +43,6 @@ CLLocationManagerDelegate {
     
     private func checkLocationAuthorization() {
         guard let locationManager = locationManager else {return}
-        
         switch locationManager.authorizationStatus {
             case .notDetermined:
                 locationManager.requestWhenInUseAuthorization()
@@ -52,8 +51,8 @@ CLLocationManagerDelegate {
             case .denied:
                 print("Authorization denied")
             case .authorizedAlways, .authorizedWhenInUse:
-                region = MKCoordinateRegion(center: locationManager.location!.coordinate,
-                                            span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
+                region = MKCoordinateRegion(center: locationManager.location?.coordinate ?? CLLocationCoordinate2D(latitude: 50.785834, longitude: -122.406417),
+                                            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
             @unknown default:
                 break
         }
@@ -62,7 +61,6 @@ CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         checkLocationAuthorization()
     }
-    
 }
 
 // Comment test
