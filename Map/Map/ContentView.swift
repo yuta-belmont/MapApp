@@ -22,18 +22,12 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-
 final class ContentViewModel: NSObject, ObservableObject,
 CLLocationManagerDelegate {
     var locationManager: CLLocationManager?
     
     @Published var region = MKCoordinateRegion(center:
-                                                CLLocationCoordinate2D(latitude: 0, longitude: 0),
+                                                CLLocationCoordinate2D(latitude: 37.785834, longitude: -122.406417),
                                               span: MKCoordinateSpan (latitudeDelta: 1,
                                                                       longitudeDelta: 1))
     
@@ -47,25 +41,21 @@ CLLocationManagerDelegate {
         
     }
     
-    func checkLocationAuthorization() {
+    private func checkLocationAuthorization() {
         guard let locationManager = locationManager else {return}
         
         switch locationManager.authorizationStatus {
-        case .notDetermined:
-            locationManager.requestWhenInUseAuthorization()
-        case .restricted:
-            print("Authorization restricted")
-            break
-        case .denied:
-            print("Authorization denied")
-            break
-        case .authorizedAlways:
-            region = MKCoordinateRegion(center: locationManager.location!.coordinate,
-                                        span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
-        case .authorizedWhenInUse:
-            break
-        @unknown default:
-            break
+            case .notDetermined:
+                locationManager.requestWhenInUseAuthorization()
+            case .restricted:
+                print("Authorization restricted")
+            case .denied:
+                print("Authorization denied")
+            case .authorizedAlways, .authorizedWhenInUse:
+                region = MKCoordinateRegion(center: locationManager.location!.coordinate,
+                                            span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
+            @unknown default:
+                break
         }
     }
     
