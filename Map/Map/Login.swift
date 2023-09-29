@@ -30,70 +30,72 @@ class FirebaseManager: NSObject {
         @State var isLoginMode = false
         @State var email = ""
         @State var password = ""
-        
+        @State var path = NavigationPath()
         
         var body: some View {
-            NavigationView {
-                ScrollView {
-                    
+            
+            NavigationStack(path: $path) {
+                
                     // Why was this in the ContentView file and why did he remove it for this section (creating a login page)?
-                    VStack(spacing:10) {
-                        
-                        Picker(selection: $isLoginMode, label:
-                                Text("Picker here")) {
-                            Text("Login")
-                                .tag(true)
-                            Text("Create Account")
-                                .tag(false)
-                        }.pickerStyle(SegmentedPickerStyle())
-                            .padding()
-                        
-                        if isLoginMode {
-                            
-                            Button {
-                                
-                            } label: {
-                                Image(systemName: "person.fill")
-                                    .font(.system(size: 100))
-                                    .padding()
-                            }
-                            
-                        }
-                        
-                        TextField("Email", text: $email)
-                            .keyboardType(.emailAddress)
-                            .autocapitalization(.none)
-                            .padding(12)
-                            .background(.white)
-                        SecureField("Password", text: $password)
-                            .padding(12)
-                            .background(.white)
+                VStack(spacing:10) {
+                    
+                    Picker(selection: $isLoginMode, label:
+                            Text("Picker here")) {
+                        Text("Login")
+                            .tag(true)
+                        Text("Create Account")
+                            .tag(false)
+                    }.pickerStyle(SegmentedPickerStyle())
+                        .padding()
+                    
+                    if isLoginMode {
                         
                         Button {
-                            handleAction()
+                            
                         } label: {
-                            
-                            HStack {
-                                Spacer()
-                                if !isLoginMode {
-                                    Text("Create Account")
-                                        .background(Color.green)
-                                        .foregroundColor(.white)
-                                        .font(.system(size: 30))
-                                        .padding(.vertical, 10)
-                                    
-                                } else {
-                                    Text("Login")
-                                        .background(Color.green)
-                                        .foregroundColor(.white)
-                                        .font(.system(size: 30))
-                                        .padding(.vertical, 10)
-                                }
-                                Spacer()
-                                
-                            }.background(Color.green)
-                            
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 100))
+                                .padding()
                         }
+                        
+                    }
+                    
+                    TextField("Email", text: $email)
+                        .keyboardType(.emailAddress)
+                        .autocapitalization(.none)
+                        .padding(12)
+                        .background(.white)
+                        .foregroundColor(.blue)
+                    SecureField("Password", text: $password)
+                        .padding(12)
+                        .background(.white)
+                        .foregroundColor(.black)
+                    
+                    Button {
+                        handleAction()
+                    } label: {
+                        
+                        HStack {
+                            Spacer()
+                            if !isLoginMode {
+                                Text("Create Account")
+                                    .background(Color.green)
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 30))
+                                    .padding(.vertical, 10)
+                                
+                            } else {
+                                Text("Login")
+                                    .background(Color.green)
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 30))
+                                    .padding(.vertical, 10)
+                            }
+                            Spacer()
+                            
+                        }.background(Color.green)
+                        
+                        //}
                         
                         Text(self.loginStatusMessage)
                             .foregroundColor(Color.red)
@@ -101,7 +103,11 @@ class FirebaseManager: NSObject {
                         //             Text("Here is my creation account page")
                     }
                     
-                    
+                    .navigationDestination (for: String.self) {view in
+                        if view == "ContentView" { ContentView()
+                        }
+                    }
+                
                 }
                 .navigationTitle(isLoginMode ? "Log In" : "Create Account")
                 .background(Color(.init(white: 0, alpha: 0.1))
@@ -111,9 +117,10 @@ class FirebaseManager: NSObject {
                 //                .imageScale(.large)
                 //                .foregroundColor(.accentColor)
                 
-                ContentView()
+                //ContentView(color: .mint)
                 //Text("Let's build out our login page!")
             }
+            
             //.padding()
             .ignoresSafeArea()
         }
@@ -139,6 +146,7 @@ class FirebaseManager: NSObject {
                     return
                 }
                 
+                path.append("ContentView")
                 print("Successfully logged in as user: \(result?.user.uid ?? "")")
                 self.loginStatusMessage = "Successfully logged in as user: \(result?.user.uid ?? "")"
             }

@@ -12,7 +12,7 @@ import CoreLocation
 struct ContentView: View {
     
     @StateObject private var viewModel = ContentViewModel()
-    
+        
     var body: some View {
         Map(coordinateRegion: $viewModel.region, showsUserLocation: true)
             .ignoresSafeArea()
@@ -45,7 +45,7 @@ CLLocationManagerDelegate {
         guard let locationManager = locationManager else {return}
         switch locationManager.authorizationStatus {
             case .notDetermined:
-                locationManager.requestWhenInUseAuthorization()
+                locationManager.requestAlwaysAuthorization()
             case .restricted:
                 print("Authorization restricted")
             case .denied:
